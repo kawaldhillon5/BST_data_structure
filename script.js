@@ -84,10 +84,10 @@ class BinarySearchTree {
         }        
     }
 
-    delete(value){
+    delete(value, root = this.root){
 
-        let node = this.root;
-        let previousNode = this.root;
+        let node = root;
+        let previousNode = root;
         while(node) {
             if(value === node.value){
                 console.log(previousNode);
@@ -124,30 +124,33 @@ class BinarySearchTree {
                         let nextNode;
                         if(node.right.left === null){
                             nextNode = node.right;
+                            nextNode.left = node.left;
+                            previousNode.left = nextNode;
                         } else {
                             let tempNode = node.right;
-                            while(tempNode){
+                            while(tempNode.left){
                                 nextNode = tempNode;
                                 tempNode = tempNode.left;
                             }
-                            nextNode.right = node.right;
+                            previousNode.left.value = tempNode.value;
+                            this.delete(tempNode.value, node.right);
                         }
-                        nextNode.left = node.left;
-                        previousNode.left = nextNode;
+                        
                     } else if(previousNode.value < value){
                         let nextNode;
                         if(node.right.left === null){
                             nextNode = node.right;
+                            nextNode.left = node.left;
+                            previousNode.left = nextNode;
                         } else {
                             let tempNode = node.right;
-                            while(tempNode){
+                            while(tempNode.left){
                                 nextNode = tempNode;
                                 tempNode = tempNode.left;
                             }
-                            nextNode.right = node.right;
+                            previousNode.right.value = tempNode.value;
+                            this.delete(tempNode.value, node.right);
                         }
-                        nextNode.left = node.left;
-                        previousNode.right = nextNode;
                     }
                 }
                 
@@ -185,7 +188,6 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 let arr = [8,3,13,2,15,67,4,1,25,30,50,33,5,7,9,6,70];
 
 const tree = new BinarySearchTree(arr);
-console.log(prettyPrint((tree.root)));
 tree.insert(80);
 tree.insert(68);
 tree.insert(69);
@@ -194,7 +196,8 @@ tree.insert(27);
 tree.insert(28);
 tree.insert(29);
 tree.insert(21);
-tree.delete(5);
+console.log(prettyPrint((tree.root)));
+tree.delete(33);
 console.log(prettyPrint((tree.root)));
 
 
