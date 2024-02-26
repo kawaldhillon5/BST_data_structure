@@ -186,9 +186,9 @@ class BinarySearchTree {
 
             const Node = queue.shift();
             if(typeof callback === 'function'){
-                callback(Node.value);
+                callback(Node);
             } else if(callback === undefined){
-                arrayReturn[i] = Node.value;
+                arrayReturn[i] = Node;
             }
             if(Node.left != null){
                 queue.push(Node.left);
@@ -291,6 +291,54 @@ class BinarySearchTree {
         }
     }
 
+    isBalanced(node = this.root, ){
+
+        let  isBalanced = true;
+        this.levelOrder((node) =>{
+
+            const leftHeight = this.#findHeight(node.left);
+            const rightHeight = this.#findHeight(node.right);
+            let difference = 0;
+            if(rightHeight > leftHeight){
+                difference = rightHeight - leftHeight;
+            } else {
+                difference = leftHeight - rightHeight;
+            }
+
+            if(difference > 1){
+                isBalanced = false;
+            }
+
+        });
+
+
+
+
+        return isBalanced;
+
+
+
+    }
+
+    static #insertionSort(array){
+        for(let i = 1; i < array.length; i++){
+            let current = array[i];
+            let j = i - 1;
+
+            while(j > -1 && current < array[j]){
+                array[j+1] = array[j];
+                j--;
+            }
+            array[j+1] = current;
+        }
+        return array;
+    }
+
+    rebalance(){
+        let array = BinarySearchTree.#insertionSort(this.inOrder())
+        return this.root = BinarySearchTree.#buildNodes(array, 0, (array.length - 1))
+    }
+
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -312,9 +360,20 @@ function doSome(node){
 
 
 let arr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
-
 const tree = new BinarySearchTree(arr);
+
+console.log(tree.isBalanced());
+tree.insert(32);
+tree.insert(33);
+tree.insert(0);
+console.log(tree.isBalanced());
+tree.rebalance();
+console.log(tree.isBalanced());
 console.log(prettyPrint((tree.root)));
+
+
+
+
 
 
 
