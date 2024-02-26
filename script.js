@@ -151,6 +151,21 @@ class BinarySearchTree {
                             previousNode.right.value = tempNode.value;
                             this.delete(tempNode.value, node.right);
                         }
+                    } else if(previousNode.value === value){
+                        let nextNode;
+                        if(node.right.left === null){
+                            nextNode = node.right;
+                            this.delete(nextNode.value, node);
+                            node.value = nextNode.value;
+                        } else {
+                            let tempNode = node.right;
+                            while(tempNode.left){
+                                nextNode = tempNode;
+                                tempNode = tempNode.left;
+                            }
+                            node.value = tempNode.value;
+                            this.delete(tempNode.value, node.right);
+                        }
                     }
                 }
                 
@@ -164,9 +179,88 @@ class BinarySearchTree {
                     node = node.left;
                 }
             }
+        }   
+    }
+
+    levelOrder(callback){
+
+        let queue = [];
+        queue.push(this.root);
+        let i = 0;
+        let arrayReturn = [];
+        while(queue.length != 0){
+
+            const Node = queue.shift();
+            if(typeof callback === 'function'){
+                callback(Node.value);
+            } else if(callback === undefined){
+                arrayReturn[i] = Node.value;
+            }
+            if(Node.left != null){
+                queue.push(Node.left);
+            }
+
+            if(Node.right != null){
+                queue.push(Node.right);
+            }
+            ++i;
         }
+        if(arrayReturn.length){
+            return arrayReturn;
+        }
+    }
+
+    preOrder(callback,node = this.root,arr = [], i = [0]){
+
+        if(node === null) return;
         
-          
+        if(typeof callback === 'function'){
+            callback(node.value);
+        } else {
+            arr[i[0]] = node.value;
+        }
+        i[0] = (i[0]+1);
+        this.preOrder(callback,node.left, arr, i);
+        this.preOrder(callback,node.right, arr, i);
+
+        if(arr.length) return arr;
+    }
+
+    inOrder(callback, node = this.root, arr=[], i = [0]){
+
+        if(node === null) return;
+
+        this.inOrder(callback,node.left, arr, i);
+        
+        if(typeof callback === 'function'){
+            callback(node.value);
+        } else {
+            arr[i[0]] = node.value;
+        }
+        i[0] = (i[0]+1);
+
+        this.inOrder(callback,node.right, arr, i);
+
+        if(arr.length) return arr;
+
+    }
+
+    postOrder(callback, node = this.root, arr=[], i = [0]){
+
+        if(node === null) return;
+
+        this.postOrder(callback,node.right, arr, i);
+
+        if(typeof callback === 'function'){
+            callback(node.value);
+        } else {
+            arr[i[0]] = node.value;
+        }
+        i[0] = (i[0]+1);
+
+        this.postOrder(callback,node.left, arr, i);
+
+        if(arr.length) return arr;
     }
 
 }
@@ -184,21 +278,17 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     }
 };
 
+function doSome(node){
+    console.log(node);
+}
 
-let arr = [8,3,13,2,15,67,4,1,25,30,50,33,5,7,9,6,70];
+
+let arr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
 
 const tree = new BinarySearchTree(arr);
-tree.insert(80);
-tree.insert(68);
-tree.insert(69);
-tree.insert(26);
-tree.insert(27);
-tree.insert(28);
-tree.insert(29);
-tree.insert(21);
 console.log(prettyPrint((tree.root)));
-tree.delete(33);
-console.log(prettyPrint((tree.root)));
+console.log(tree.postOrder(doSome));
+
 
 
 
