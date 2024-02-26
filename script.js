@@ -63,25 +63,19 @@ class BinarySearchTree {
 
     find(value){
 
-        let queue = [];
-        queue.push(this.root);
-
-        while(queue.length != 0){
-
-            if(value === queue[0].value){
-                return queue[0];
+       let node = this.root;
+        while(node) {
+            if(value === node.value){
+                return node;
+            } else {
+                if(value > node.value){
+                    node = node.right;
+                } else {
+                    node = node.left;
+                }
             }
-            const Node = queue.shift();
+        }
 
-            if(Node.left != null){
-                queue.push(Node.left);
-            }
-
-            if(Node.right != null){
-                queue.push(Node.right);
-            }
-
-        }        
     }
 
     delete(value, root = this.root){
@@ -263,6 +257,40 @@ class BinarySearchTree {
         if(arr.length) return arr;
     }
 
+    static #max(a,b){
+        return a>b ? a : b;
+    }
+
+    #findHeight(node){
+        if(node === null) return -1;
+
+        return BinarySearchTree.#max(this.#findHeight(node.left), this.#findHeight(node.right)) + 1;
+    }
+
+    heigth(value){
+        return this.#findHeight(this.find(value));
+    }
+
+    depth(value){
+
+        let depth = 0;
+        let node = this.root;
+
+        while(node){
+
+            if(node.value === value){
+                return depth;
+            } else if(value > node.value){
+                ++depth;
+                node = node.right;
+            } else {
+                ++depth;
+                node = node.left;
+            } 
+
+        }
+    }
+
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -287,7 +315,7 @@ let arr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,
 
 const tree = new BinarySearchTree(arr);
 console.log(prettyPrint((tree.root)));
-console.log(tree.postOrder(doSome));
+
 
 
 
